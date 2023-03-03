@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  mssql_server:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    container_name: mssql_server
+    hostname: mssql_server
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${root_password}
+    ports:
+      - 1434:1433
+    volumes:
+      - ../dockervolumes/celuorden:/var/opt/mssql/data
+  acf_server:
+    depends_on:
+      - mssql_server
+    image: ortussolutions/commandbox:adobe2018
+    container_name: acf_server
+    hostname: acf_server
+    environment:
+      - CFCONFIG_ADMINPASSWORD=${root_password}
+    ports:
+      - 8080:8080
+    volumes:
+      - ./app:/app
